@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BunnySweatyShop</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="logo">🐰</span>
+      <div>
+        <h1>BunnySweatyShop</h1>
+        <p class="address">Jalanjangangamonterus</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Slider Produk (maks 5) -->
+    <section class="slider-wrap">
+      <button class="nav prev" aria-label="Previous slide">&lt;</button>
+      <div class="slider-viewport">
+        <div class="slider">
+          <figure class="slide"><img src="images/product1.svg" alt="Sweater 1"><figcaption>Sweater 1</figcaption></figure>
+          <figure class="slide"><img src="images/product2.svg" alt="Sweater 2"><figcaption>Sweater 2</figcaption></figure>
+          <figure class="slide"><img src="images/product3.svg" alt="Sweater 3"><figcaption>Sweater 3</figcaption></figure>
+          <figure class="slide"><img src="images/product4.svg" alt="Sweater 4"><figcaption>Sweater 4</figcaption></figure>
+          <figure class="slide"><img src="images/product5.svg" alt="Sweater 5"><figcaption>Sweater 5</figcaption></figure>
+        </div>
+      </div>
+      <button class="nav next" aria-label="Next slide">&gt;</button>
+    </section>
+
+    <!-- Produk singkat + tombol keranjang/checkout -->
+    <section class="products">
+      <div class="product-card">
+        <img src="images/product1.svg" alt="Produk contoh" />
+        <h3>Sweater Cozy</h3>
+        <p class="price">Rp 199.000</p>
+        <div class="actions">
+          <button id="add-to-cart">Tambah ke Keranjang</button>
+          <button id="checkout">Checkout</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimoni -->
+    <section class="testimonials">
+      <h2>Testimoni Pelanggan</h2>
+      <textarea id="testimonial-input" placeholder="Tulis testimoni kamu..."></textarea>
+      <div class="tx-actions">
+        <button id="submit-testimonial">Kirim</button>
+      </div>
+      <ul id="testimonial-list" aria-live="polite"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 BunnySweatyShop — Jalanjangangamonterus</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

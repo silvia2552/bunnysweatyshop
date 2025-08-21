@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
+  <rect width="100%" height="100%" fill="#fff6fb"/>
+  <g transform="translate(320,330)">
+    <path d="M-160,-70 q40-130 150-130 q160,0 190,130 v170 q0,35-32,55 q-42,25-158,25 q-116,0-158-25 q-32-20-32-55z"
+          fill="#e9f3ff" stroke="#7aa6c9" stroke-width="6"/>
+    <path d="M-70,-180 h140 q20,0 20,20 v30 q0,20-20,20 h-140 q-20,0-20-20 v-30 q0-20 20-20z"
+          fill="#ffd9ea" stroke="#7aa6c9" stroke-width="6"/>
+    <!-- Peach badge -->
+    <g transform="translate(0,15)">
+      <circle cx="0" cy="40" r="46" fill="#fff" stroke="#ff9ac1" stroke-width="5"/>
+      <g transform="translate(0,35)">
+        <path d="M0,-20 c-30,-40 -80,10 -40,40 c40,30 40,30 40,30 c0,0 0,0 40,-30 c40,-30 -10,-80 -40,-40z"
+              fill="#ffb6d6" stroke="#ff9ac1" stroke-width="4"/>
+        <path d="M0,-22 c10,-14 24,-26 34,-28 c10,-2 8,8 0,12 c-10,4 -20,8 -34,16z" fill="#87c99b"/>
+      </g>
+    </g>
+    <text x="0" y="150" font-size="22" text-anchor="middle" fill="#6a9fc2" font-family="sans-serif">복숭아</text>
+  </g>
+</svg>

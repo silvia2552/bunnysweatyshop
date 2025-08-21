@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
+  <rect width="100%" height="100%" fill="#fff0f7"/>
+  <g transform="translate(320,330)">
+    <path d="M-165,-80 q30-120 150-120 q150,0 180,120 v170 q0,35-30,55 q-40,25-150,25 q-110,0-150-25 q-30-20-30-55z"
+          fill="#e8f4ff" stroke="#7aa6c9" stroke-width="6"/>
+    <path d="M-70,-180 h140 q20,0 20,20 v30 q0,20-20,20 h-140 q-20,0-20-20 v-30 q0-20 20-20z"
+          fill="#ffd9ea" stroke="#7aa6c9" stroke-width="6"/>
+    <!-- Milk carton patch -->
+    <g transform="translate(0,20)">
+      <rect x="-40" y="-20" width="80" height="100" rx="10" fill="#fff" stroke="#7aa6c9" stroke-width="5"/>
+      <path d="M-40,-20 l20,-18 h40 l20,18" fill="#cfe7ff" stroke="#7aa6c9" stroke-width="5"/>
+      <text x="0" y="30" font-size="22" text-anchor="middle" fill="#6aa3ca" font-family="sans-serif">우유</text>
+      <line x1="-20" y1="48" x2="20" y2="48" stroke="#ffd1e5" stroke-width="6"/>
+    </g>
+    <text x="0" y="150" font-size="22" text-anchor="middle" fill="#6a9fc2" font-family="sans-serif">달콤해</text>
+  </g>
+</svg>

@@ -1,167 +1,120 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BunnySweatyShop — Toko Sweater</title>
-  <meta name="description" content="BunnySweatyShop: koleksi sweater baby pink & baby blue. Nyaman, adem, dan stylish.">
-  <link rel="icon" href="assets/svg/logo.svg">
-  <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BunnySweatyShop — Sweater Korean Vibe</title>
+  <meta name="description" content="BunnySweatyShop: Sweater lucu vibe Korea. Baby pink & baby blue.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css"/>
 </head>
 <body>
-  <header class="header" role="banner">
-    <div class="header-inner container">
-      <a class="brand" href="#top" aria-label="Beranda BunnySweatyShop">
-        <img src="assets/svg/logo.svg" alt="Logo BunnySweatyShop">
-        <span>BunnySweatyShop</span>
-      </a>
-      <nav class="nav" aria-label="Navigasi utama">
-        <a href="#terlaris">Terlaris</a>
-        <a href="#katalog">Katalog</a>
-        <a href="#testimoni">Testimoni</a>
-        <a href="#kontak">Kritik & Saran</a>
-      </nav>
-      <button id="open-cart" class="cart-btn" aria-label="Buka keranjang">
-        Keranjang
-        <span class="badge" aria-live="polite">0</span>
-      </button>
+  <header class="site-header">
+    <div class="brand">
+      <span class="logo">🐰</span>
+      <h1>BunnySweatyShop</h1>
     </div>
+    <nav class="nav">
+      <a href="#produk">Produk</a>
+      <a href="#testimoni">Testimoni</a>
+      <a href="#kontak">Kontak</a>
+    </nav>
+    <button id="cartBtn" class="btn cart-btn" aria-label="Buka keranjang">
+      <span>Keranjang</span>
+      <span id="cartCount" class="badge">0</span>
+    </button>
   </header>
 
-  <main id="top">
+  <main>
+    <!-- HERO -->
     <section class="hero">
-      <div class="container">
-        <span class="badge-pill">Sweater Pastel</span>
-        <h1>Tampil Manis dengan Baby Pink & Baby Blue</h1>
-        <p>Material lembut, ringan, dan nyaman dipakai sehari‑hari. Cocok untuk hangout, kuliah, atau WFH.</p>
-        <div class="cta-row">
-          <a class="btn btn-primary" href="#katalog">Lihat Katalog</a>
-          <a class="btn btn-outline" href="#testimoni">Baca Testimoni</a>
+      <div class="hero-content">
+        <h2>Sweet Sweaters, Korean Vibes</h2>
+        <p>Warna baby pink & baby blue, gaya lucu khas Korea. Nyaman dipakai, estetik difoto.</p>
+        <a href="#produk" class="btn cta">Belanja Sekarang</a>
+      </div>
+      <div class="hero-art"></div>
+    </section>
+
+    <!-- SLIDER PRODUK TERLARIS (maks 5) -->
+    <section id="produk" class="section">
+      <h3>Produk Terlaris</h3>
+      <div class="slider" aria-roledescription="carousel">
+        <button class="nav prev" aria-label="Sebelumnya">&#10094;</button>
+        <div class="track" id="sliderTrack">
+          <!-- Cards injected by JS -->
         </div>
+        <button class="nav next" aria-label="Selanjutnya">&#10095;</button>
       </div>
+      <div class="dots" id="dots"></div>
     </section>
 
-    <section id="terlaris" class="section container" aria-label="Produk terlaris">
-      <h2>Produk Terlaris</h2>
-      <div class="slider" role="region" aria-roledescription="carousel">
-        <div class="slider-track"></div>
-        <div class="slider-controls">
-          <button id="prev" aria-label="Sebelumnya">◀</button>
-          <button id="next" aria-label="Berikutnya">▶</button>
+    <!-- TESTIMONI -->
+    <section id="testimoni" class="section">
+      <h3>Testimoni Pelanggan</h3>
+      <form id="testiForm" class="card form">
+        <div class="form-row">
+          <label for="nama">Nama</label>
+          <input id="nama" required placeholder="Nama kamu"/>
         </div>
-      </div>
+        <div class="form-row">
+          <label for="pesan">Kesan</label>
+          <textarea id="pesan" rows="3" required placeholder="Ceritakan pengalamanmu"></textarea>
+        </div>
+        <button class="btn" type="submit">Kirim Testimoni</button>
+      </form>
+      <ul id="testiList" class="testi-list"></ul>
     </section>
 
-    <section id="katalog" class="section container" aria-label="Katalog produk">
-      <h2>Katalog</h2>
-      <div id="products" class="grid"></div>
-    </section>
-
-    <section id="testimoni" class="section container" aria-label="Testimoni pelanggan">
-      <h2>Testimoni Pelanggan</h2>
-      <div id="testimonials" class="testimonials" aria-live="polite"></div>
-
-      <div class="form" style="margin-top:1rem">
-        <h3>Tambah Testimoni</h3>
-        <form id="t-form">
-          <div class="row">
-            <div>
-              <label for="t-name">Nama</label>
-              <input id="t-name" name="name" placeholder="Namamu">
-            </div>
-            <div>
-              <label for="t-rating">Rating</label>
-              <select id="t-rating" name="rating">
-                <option value="5">★★★★★ (5)</option>
-                <option value="4">★★★★☆ (4)</option>
-                <option value="3">★★★☆☆ (3)</option>
-                <option value="2">★★☆☆☆ (2)</option>
-                <option value="1">★☆☆☆☆ (1)</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <label for="t-text">Testimoni</label>
-            <textarea id="t-text" name="text" placeholder="Ceritakan pengalamanmu..."></textarea>
-          </div>
-          <button class="btn btn-primary" type="submit">Kirim Testimoni</button>
-        </form>
-      </div>
-    </section>
-
-    <section id="kontak" class="section container" aria-label="Kritik dan saran">
-      <h2>Kritik & Saran</h2>
-      <div class="form">
-        <form id="f-form">
-          <div class="row">
-            <div>
-              <label for="f-name">Nama</label>
-              <input id="f-name" name="name" placeholder="Namamu">
-            </div>
-            <div>
-              <label for="f-email">Email (opsional)</label>
-              <input id="f-email" name="email" type="email" placeholder="email@contoh.com">
-            </div>
-          </div>
-          <div>
-            <label for="f-message">Pesan</label>
-            <textarea id="f-message" name="message" placeholder="Tulis kritik/saran di sini..."></textarea>
-          </div>
-          <button class="btn btn-primary" type="submit">Kirim</button>
-        </form>
-      </div>
+    <!-- KONTAK / ALAMAT -->
+    <section id="kontak" class="section">
+      <h3>Alamat Toko</h3>
+      <address class="card address">
+        <strong>BunnySweatyShop</strong><br/>
+        jalanjangangamonterus<br/>
+        <small>DM Instagram @bunnysweatyshop untuk jam buka.</small>
+      </address>
+      <button id="checkoutBtn" class="btn primary">Checkout</button>
     </section>
   </main>
 
-  <footer class="footer">
-    <div class="container cols">
-      <div>
-        <strong>Alamat Toko</strong>
-        <p class="address">jalanjangangamonterus rt 01 no19</p>
-        <p>Buka: Senin–Sabtu 09.00–18.00 WIB</p>
+  <!-- MODAL: KERANJANG -->
+  <div id="cartModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="close" data-close>&times;</button>
+      <h4>Keranjang</h4>
+      <ul id="cartItems" class="cart-items"></ul>
+      <div class="cart-total">
+        <span>Total</span>
+        <strong id="cartTotal">Rp0</strong>
       </div>
-      <div>
-        <strong>Ikuti Kami</strong>
-        <p>IG: @bunnysweatyshop • TikTok: @bunnysweatyshop</p>
+      <div class="modal-actions">
+        <button id="clearCart" class="btn ghost">Kosongkan</button>
+        <button id="goCheckout" class="btn primary">Lanjut Checkout</button>
       </div>
     </div>
-    <p class="container" style="margin-top: .6rem;">© <span id="year"></span> BunnySweatyShop. All rights reserved.</p>
+  </div>
+
+  <!-- MODAL: CHECKOUT -->
+  <div id="checkoutModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="close" data-close>&times;</button>
+      <h4>Checkout</h4>
+      <p>Fitur demo. Masukkan email agar kami kirim link pembayaran.</p>
+      <form id="checkoutForm" class="form">
+        <input id="email" type="email" required placeholder="emailmu@example.com"/>
+        <button class="btn primary" type="submit">Kirim</button>
+      </form>
+      <p id="checkoutMsg" class="muted"></p>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <small>© <span id="year"></span> BunnySweatyShop. Made with ♥.</small>
   </footer>
 
-  <!-- Cart Drawer (dialog) -->
-  <dialog id="cart" style="border:none;border-radius:16px;max-width:720px;width:92%;padding:0;">
-    <div style="padding:1rem;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between">
-      <strong>Keranjang Belanja</strong>
-      <button id="close-cart" aria-label="Tutup">✕</button>
-    </div>
-    <div id="cart-items" style="padding:1rem"></div>
-    <div style="padding:1rem;border-top:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between">
-      <div>Total: <strong id="cart-total">Rp0</strong></div>
-      <button id="checkout" class="btn btn-primary">Checkout</button>
-    </div>
-  </dialog>
-
-  <!-- Toast -->
-  <div id="toast" style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111827;color:#fff;padding:.6rem .9rem;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;transition:opacity .25s;z-index:50">...</div>
-  <script>
-    (function(){ const t = document.getElementById('toast'); window.addEventListener('load', ()=>{ t.style.opacity = 0; }); t.classList.remove = (t.classList.remove||Function.prototype); })();
-  </script>
-  <script>
-    // show/hide helper for toast
-    (function(){
-      const t=document.getElementById('toast');
-      t.classList.add('hide');
-      t.classList.remove('show');
-      window.addEventListener('load',()=>{
-        t.style.opacity=0;
-      });
-      const o = new MutationObserver(()=>{
-        t.style.opacity = t.classList.contains('show')?1:0;
-      });
-      o.observe(t,{attributes:true});
-      document.getElementById('year').textContent = new Date().getFullYear();
-    })();
-  </script>
-  <script src="js/script.js"></script>
+  <script src="js/script.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
+  <rect width="100%" height="100%" fill="#eaf5ff"/>
+  <g transform="translate(320,340)">
+    <path d="M-170,-70 q40-130 170-130 q130,0 150,130 v160 q0,40-35,60 q-45,26-115,26 q-70,0-115-26 q-35-20-35-60z"
+          fill="#ffeaf2" stroke="#87b4d6" stroke-width="6"/>
+    <path d="M-60,-190 h120 q18,0 18,18 v26 q0,18-18,18 h-120 q-18,0-18-18 v-26 q0-18 18-18z"
+          fill="#cfe7ff" stroke="#87b4d6" stroke-width="6"/>
+    <!-- Cherry blossom badge -->
+    <g transform="translate(0,0) scale(1.2)">
+      <circle cx="0" cy="10" r="44" fill="#fff" stroke="#ff9ac1" stroke-width="5"/>
+      <g fill="#ffc0d7" stroke="#ff9ac1" stroke-width="4">
+        <path d="M0,-26 q10,-22 22,0 q22,-10 22,10 q22,10 0,22 q10,22-10,22 q-10,22-22,0 q-22,10-22,-10 q-22,-10 0,-22 q-10,-22 10,-22z"/>
+      </g>
+    </g>
+    <!-- Hangul: 봄 (spring) -->
+    <text x="0" y="140" font-size="24" text-anchor="middle" fill="#6a9fc2" font-family="sans-serif">봄</text>
+  </g>
+</svg>

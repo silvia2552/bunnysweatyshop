@@ -1,153 +1,233 @@
-// Data produk (maks 5 item)
+/* BunnySweatyShop - storefront logic (vanilla JS) */
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+
 const PRODUCTS = [
-  { id: 's1', name: 'Sweater Bunny 귀엽다', price: 189000, img: 'assets/img/sweater_bunny.svg' },
-  { id: 's2', name: 'Sweater Blossom 봄', price: 199000, img: 'assets/img/sweater_blossom.svg' },
-  { id: 's3', name: 'Sweater Milk 우유', price: 179000, img: 'assets/img/sweater_milk.svg' },
-  { id: 's4', name: 'Sweater Star 반짝', price: 199000, img: 'assets/img/sweater_star.svg' },
-  { id: 's5', name: 'Sweater Peach 복숭아', price: 199000, img: 'assets/img/sweater_peach.svg' },
+  {id:"sw1", name:"Cloudy Knit Pullover", price:179000, image:"assets/svg/sweater1.svg", badge:"Best Seller"},
+  {id:"sw2", name:"Pastel Breeze Hoodie", price:199000, image:"assets/svg/sweater2.svg", badge:"Hot"},
+  {id:"sw3", name:"Cotton Candy Crew", price:149000, image:"assets/svg/sweater3.svg", badge:"Limited"},
+  {id:"sw4", name:"Baby Blue Cardigan", price:189000, image:"assets/svg/sweater4.svg"},
+  {id:"sw5", name:"Blush Zip Sweater", price:209000, image:"assets/svg/sweater5.svg"},
 ];
 
-// Util
-const fmt = n => 'Rp' + n.toLocaleString('id-ID');
+const currency = (n) => new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR', maximumFractionDigits:0}).format(n);
 
-// Render slider cards
-const track = document.getElementById('sliderTrack');
-const dots = document.getElementById('dots');
+/* --- Cart state with localStorage --- */
+const CART_KEY = "bss_cart_v1";
+const loadCart = () => JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+const saveCart = (cart) => localStorage.setItem(CART_KEY, JSON.stringify(cart));
+const addToCart = (id) => {
+  const cart = loadCart();
+  const item = cart.find(i => i.id === id);
+  if(item) item.qty += 1; else cart.push({id, qty:1});
+  saveCart(cart);
+  renderCartBadge();
+  toast("Ditambahkan ke keranjang");
+};
+const removeFromCart = (id) => {
+  let cart = loadCart();
+  cart = cart.filter(i => i.id !== id);
+  saveCart(cart); renderCart();
+  renderCartBadge();
+};
+const changeQty = (id, delta) => {
+  const cart = loadCart();
+  const item = cart.find(i => i.id === id);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0) return removeFromCart(id);
+  saveCart(cart); renderCart();
+  renderCartBadge();
+};
+const cartTotal = () => loadCart().reduce((sum,i)=>{
+  const p = PRODUCTS.find(p=>p.id===i.id);
+  return sum + (p ? p.price*i.qty : 0);
+},0);
 
-PRODUCTS.forEach((p, i) => {
-  const card = document.createElement('article');
-  card.className = 'card product';
-  card.innerHTML = `
-    <img src="${p.img}" alt="${p.name}" width="160" height="160" loading="lazy"/>
-    <div class="meta">
-      <h4>${p.name}</h4>
-      <p class="muted">Bahan halus, adem, cocok untuk OOTD ala Korea.</p>
-      <div class="price">${fmt(p.price)}</div>
-      <div class="actions">
-        <button class="btn primary" data-add="${p.id}">Tambah ke Keranjang</button>
+function renderCartBadge(){
+  const count = loadCart().reduce((n,i)=>n+i.qty,0);
+  const badge = $(".cart-btn .badge");
+  if(badge) badge.textContent = count;
+}
+
+function renderProducts(){
+  const wrap = $("#products");
+  wrap.innerHTML = PRODUCTS.map(p => `
+    <article class="card" aria-label="${p.name}">
+      <div class="media"><img src="${p.image}" alt="${p.name}" loading="lazy"></div>
+      <div class="body">
+        ${p.badge ? `<span class="badge-pill">${p.badge}</span>` : ""}
+        <h3>${p.name}</h3>
+        <div class="price">${currency(p.price)}</div>
+        <div class="actions">
+          <button class="add" data-id="${p.id}">+ Keranjang</button>
+          <button class="buy" data-id="${p.id}">Checkout</button>
+        </div>
+      </div>
+    </article>
+  `).join("");
+  // bind
+  $$("#products .add").forEach(btn => btn.addEventListener("click", e => addToCart(e.currentTarget.dataset.id)));
+  $$("#products .buy").forEach(btn => btn.addEventListener("click", e => {
+    addToCart(e.currentTarget.dataset.id);
+    openCart();
+  }));
+}
+
+function renderSlider(){
+  const slides = PRODUCTS.slice(0,5).map(p => `
+    <div class="slide" aria-label="${p.name}">
+      <div class="visual"><img src="${p.image}" alt="${p.name}"></div>
+      <div class="copy">
+        <span class="badge-pill">Terlaris</span>
+        <h3>${p.name}</h3>
+        <p>Nyaman, ringan, dan lembut—pas untuk cuaca tropis. Warna pastel baby pink & baby blue yang manis.</p>
+        <div class="price">${currency(p.price)}</div>
+        <div class="actions">
+          <button class="add" data-id="${p.id}">+ Keranjang</button>
+          <button class="buy" data-id="${p.id}">Checkout</button>
+        </div>
       </div>
     </div>
-  `;
-  track.appendChild(card);
-
-  const dot = document.createElement('button');
-  if (i === 0) dot.classList.add('active');
-  dot.dataset.to = i;
-  dots.appendChild(dot);
-});
-
-// Slider logic
-let index = 0;
-const prevBtn = document.querySelector('.nav.prev');
-const nextBtn = document.querySelector('.nav.next');
-
-function updateSlider() {
-  const cardWidth = track.children[0].getBoundingClientRect().width;
-  track.style.transform = `translateX(${-index * (cardWidth)}px)`;
-  [...dots.children].forEach((d, i) => d.classList.toggle('active', i === index));
+  `).join("");
+  $(".slider-track").innerHTML = slides;
+  bindActionButtons($(".slider"));
 }
 
-prevBtn.addEventListener('click', () => { index = (index - 1 + PRODUCTS.length) % PRODUCTS.length; updateSlider(); });
-nextBtn.addEventListener('click', () => { index = (index + 1) % PRODUCTS.length; updateSlider(); });
-dots.addEventListener('click', e => {
-  if (e.target.dataset.to) { index = +e.target.dataset.to; updateSlider(); }
-});
-window.addEventListener('resize', updateSlider);
-setInterval(() => { index = (index + 1) % PRODUCTS.length; updateSlider(); }, 4000);
-
-// Cart
-const cartBtn = document.getElementById('cartBtn');
-const cartCount = document.getElementById('cartCount');
-const cartModal = document.getElementById('cartModal');
-const cartItems = document.getElementById('cartItems');
-const cartTotal = document.getElementById('cartTotal');
-const clearCartBtn = document.getElementById('clearCart');
-const goCheckoutBtn = document.getElementById('goCheckout');
-
-const LS_KEY = 'bunny_cart_v1';
-let cart = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-
-function saveCart() {
-  localStorage.setItem(LS_KEY, JSON.stringify(cart));
-  cartCount.textContent = cart.reduce((a,b)=>a+b.qty,0);
-  renderCart();
+function bindActionButtons(root){
+  $$(".add", root).forEach(btn => btn.addEventListener("click", e => addToCart(e.currentTarget.dataset.id)));
+  $$(".buy", root).forEach(btn => btn.addEventListener("click", e => { addToCart(e.currentTarget.dataset.id); openCart(); }));
 }
-function addToCart(id) {
-  const item = cart.find(x => x.id === id);
-  if (item) item.qty++; else cart.push({ id, qty: 1 });
-  saveCart();
+
+let currentSlide = 0;
+function slideTo(idx){
+  const track = $(".slider-track");
+  const total = PRODUCTS.slice(0,5).length;
+  currentSlide = (idx + total) % total;
+  track.style.transform = `translateX(-${currentSlide*100}%)`;
 }
-function removeFromCart(id) {
-  cart = cart.filter(x => x.id !== id);
-  saveCart();
+function nextSlide(){ slideTo(currentSlide+1) }
+function prevSlide(){ slideTo(currentSlide-1) }
+
+/* Cart drawer */
+function openCart(){ $("#cart").showModal(); renderCart(); }
+function closeCart(){ $("#cart").close(); }
+function renderCart(){
+  const body = $("#cart-items");
+  const cart = loadCart();
+  if(cart.length === 0){
+    body.innerHTML = "<p>Keranjang kosong.</p>";
+  } else {
+    body.innerHTML = cart.map(i => {
+      const p = PRODUCTS.find(p=>p.id===i.id);
+      if(!p) return "";
+      return `
+        <div class="row" style="display:flex;gap:.6rem;align-items:center;justify-content:space-between;padding:.4rem 0;border-bottom:1px dashed #e5e7eb">
+          <div style="display:flex;gap:.6rem;align-items:center">
+            <img src="${p.image}" alt="" width="40" height="40">
+            <div>
+              <div style="font-weight:700">${p.name}</div>
+              <div>${currency(p.price)}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:.4rem;align-items:center">
+            <button aria-label="Kurangi" onclick="changeQty('${i.id}',-1)">−</button>
+            <span aria-live="polite">${i.qty}</span>
+            <button aria-label="Tambah" onclick="changeQty('${i.id}',1)">+</button>
+            <button onclick="removeFromCart('${i.id}')">Hapus</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+  $("#cart-total").textContent = currency(cartTotal());
 }
-function renderCart() {
-  cartItems.innerHTML = '';
-  let total = 0;
-  cart.forEach(ci => {
-    const p = PRODUCTS.find(p => p.id === ci.id);
-    const li = document.createElement('li');
-    const sub = p.price * ci.qty;
-    total += sub;
-    li.innerHTML = `
-      <span>${p.name} × ${ci.qty}</span>
-      <span>${fmt(sub)} <button class="btn ghost" data-remove="${ci.id}">hapus</button></span>
-    `;
-    cartItems.appendChild(li);
-  });
-  cartTotal.textContent = fmt(total);
+
+/* Checkout (mock) */
+function checkout(){
+  if(loadCart().length === 0){ toast("Keranjang masih kosong"); return; }
+  toast("Checkout berhasil (simulasi). Kami akan menghubungi Anda via WhatsApp!");
+  // In real app, redirect to payment or WhatsApp API
+  localStorage.removeItem(CART_KEY);
+  renderCart(); renderCartBadge();
 }
-document.addEventListener('click', e => {
-  if (e.target.dataset.add) addToCart(e.target.dataset.add);
-  if (e.target.dataset.remove) removeFromCart(e.target.dataset.remove);
-  if (e.target.hasAttribute('data-close')) e.target.closest('.modal').setAttribute('aria-hidden', 'true');
-});
 
-cartBtn.addEventListener('click', () => cartModal.setAttribute('aria-hidden','false'));
-clearCartBtn.addEventListener('click', () => { cart = []; saveCart(); });
-goCheckoutBtn.addEventListener('click', () => {
-  document.getElementById('checkoutModal').setAttribute('aria-hidden','false');
-});
+/* Toast */
+let toastTimer;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 1800);
+}
 
-saveCart();
-
-// Checkout
-const checkoutBtn = document.getElementById('checkoutBtn');
-const checkoutModal = document.getElementById('checkoutModal');
-checkoutBtn.addEventListener('click', ()=> checkoutModal.setAttribute('aria-hidden','false'));
-
-document.getElementById('checkoutForm').addEventListener('submit', e => {
+/* Testimonials */
+const T_KEY = "bss_testimonials_v1";
+const loadT = () => JSON.parse(localStorage.getItem(T_KEY) || "[]");
+const saveT = (arr) => localStorage.setItem(T_KEY, JSON.stringify(arr));
+const defaultT = [
+  {name:"Dina", rating:5, text:"Bahannya adem dan lembut. Warna pastel-nya gemas!"},
+  {name:"Rafi", rating:4, text:"Pengiriman cepat, ukuran pas. Recommended."},
+  {name:"Sari", rating:5, text:"Modelnya simple tapi elegan. Cocok buat sehari-hari."}
+];
+function ensureDefaultT(){
+  if(loadT().length === 0) saveT(defaultT);
+}
+function renderTestimonials(){
+  const list = $("#testimonials");
+  const all = loadT();
+  list.innerHTML = all.map(t => `
+    <div class="testimonial">
+      <div class="name">${t.name}</div>
+      <div class="rating">${"★".repeat(t.rating)}${"☆".repeat(5-t.rating)}</div>
+      <p>${t.text}</p>
+    </div>
+  `).join("");
+}
+function handleSubmitTesti(e){
   e.preventDefault();
-  const email = document.getElementById('email').value;
-  document.getElementById('checkoutMsg').textContent = `Terima kasih! Link pembayaran akan dikirim ke ${email}`;
-});
-
-// Testimoni
-const testiForm = document.getElementById('testiForm');
-const testiList = document.getElementById('testiList');
-const LS_TESTI = 'bunny_testi_v1';
-let testimonials = JSON.parse(localStorage.getItem(LS_TESTI) || '[]');
-
-function renderTesti(){
-  testiList.innerHTML = '';
-  testimonials.forEach(t => {
-    const li = document.createElement('li');
-    const date = new Date(t.time).toLocaleDateString('id-ID');
-    li.innerHTML = `<strong>${t.nama}</strong> <small class="muted">(${date})</small><br>${t.pesan}`;
-    testiList.appendChild(li);
-  });
+  const name = $("#t-name").value.trim() || "Anonim";
+  const rating = +$("#t-rating").value || 5;
+  const text = $("#t-text").value.trim();
+  if(!text){ toast("Tulis pengalamanmu dulu ya"); return; }
+  const all = loadT();
+  all.unshift({name, rating, text});
+  saveT(all);
+  $("#t-form").reset();
+  renderTestimonials();
+  toast("Terima kasih atas testimoninya!");
 }
 
-testiForm.addEventListener('submit', e => {
+/* Kritik & Saran */
+function handleSubmitFeedback(e){
   e.preventDefault();
-  const nama = document.getElementById('nama').value.trim();
-  const pesan = document.getElementById('pesan').value.trim();
-  if(!nama || !pesan) return;
-  testimonials.unshift({ nama, pesan, time: Date.now() });
-  localStorage.setItem(LS_TESTI, JSON.stringify(testimonials));
-  testiForm.reset();
-  renderTesti();
-});
+  const name = $("#f-name").value.trim() || "Anonim";
+  const message = $("#f-message").value.trim();
+  if(!message){ toast("Isi pesan kritik/saran ya"); return; }
+  // For demo: just store to localStorage and show success
+  const FB_KEY = "bss_feedback_v1";
+  const all = JSON.parse(localStorage.getItem(FB_KEY) || "[]");
+  all.push({name, message, at: new Date().toISOString()});
+  localStorage.setItem(FB_KEY, JSON.stringify(all));
+  $("#f-form").reset();
+  toast("Terima kasih untuk kritik & saran!");
+}
 
-renderTesti();
-document.getElementById('year').textContent = new Date().getFullYear();
+/* Init */
+document.addEventListener("DOMContentLoaded", () => {
+  renderProducts();
+  renderSlider();
+  ensureDefaultT();
+  renderTestimonials();
+  renderCartBadge();
+  $("#next").addEventListener("click", nextSlide);
+  $("#prev").addEventListener("click", prevSlide);
+  $("#open-cart").addEventListener("click", openCart);
+  $("#close-cart").addEventListener("click", closeCart);
+  $("#checkout").addEventListener("click", checkout);
+  $("#t-form").addEventListener("submit", handleSubmitTesti);
+  $("#f-form").addEventListener("submit", handleSubmitFeedback);
+  // auto-play
+  setInterval(nextSlide, 5000);
+});
